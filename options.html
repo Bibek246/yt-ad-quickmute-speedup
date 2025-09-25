@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>YouTube Ad Mute & Speedup — Options</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 24px; }
+      .row { margin-bottom: 12px; }
+      label { display: inline-block; width: 220px; }
+      input[type="number"] { width: 80px; }
+      .hint { color: #666; font-size: 0.9rem; }
+      button { padding: 8px 14px; }
+    </style>
+  </head>
+  <body>
+    <h1>Options</h1>
+    <div class="row">
+      <label for="adSpeed">Ad playback speed:</label>
+      <input id="adSpeed" type="number" min="0.1" max="16" step="0.1" />
+      <span class="hint">Default 4.0 (YouTube often clamps around 2–4×)</span>
+    </div>
+    <div class="row">
+      <button id="saveBtn">Save</button>
+      <span id="status" class="hint"></span>
+    </div>
+
+    <script>
+      const adSpeedInput = document.getElementById('adSpeed');
+      const status = document.getElementById('status');
+      const saveBtn = document.getElementById('saveBtn');
+
+      function load() {
+        if (!chrome?.storage?.sync) return;
+        chrome.storage.sync.get(['adSpeed'], (res) => {
+          adSpeedInput.value = (res.adSpeed ?? 4.0);
+        });
+      }
+
+      saveBtn.addEventListener('click', () => {
+        const v = parseFloat(adSpeedInput.value);
+        const adSpeed = (!Number.isNaN(v) && v > 0) ? v : 4.0;
+        chrome.storage.sync.set({ adSpeed }, () => {
+          status.textContent = 'Saved!';
+          setTimeout(() => status.textContent = '', 1500);
+        });
+      });
+
+      load();
+    </script>
+  </body>
+</html>
