@@ -4,48 +4,44 @@
     <meta charset="utf-8">
     <title>YouTube Ad Mute & Speedup — Options</title>
     <style>
-      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 24px; }
-      .row { margin-bottom: 12px; }
-      label { display: inline-block; width: 220px; }
-      input[type="number"] { width: 80px; }
+      body { font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; padding: 24px; max-width: 760px; }
+      .row { margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+      label { min-width: 260px; }
+      input[type="number"] { width: 110px; }
       .hint { color: #666; font-size: 0.9rem; }
       button { padding: 8px 14px; }
+      h1 { margin-top: 0; }
+      .divider { height: 1px; background: #e5e7eb; margin: 16px 0; }
     </style>
   </head>
   <body>
-    <h1>Options</h1>
+    <h1>Extension Options</h1>
+
     <div class="row">
-      <label for="adSpeed">Ad playback speed:</label>
+      <label for="adSpeed">Default ad playback speed:</label>
       <input id="adSpeed" type="number" min="0.1" max="16" step="0.1" />
-      <span class="hint">Default 4.0 (YouTube often clamps around 2–4×)</span>
+      <span class="hint">Used when “Max ad speed” is OFF. Default 4.0×</span>
     </div>
+
+    <div class="row">
+      <label for="useMaxAdSpeed">Use max ad speed (16×):</label>
+      <input id="useMaxAdSpeed" type="checkbox" />
+      <span class="hint">If ON, ads force 16×; your normal speed returns after ads.</span>
+    </div>
+
+    <div class="row">
+      <label for="autoSkip">Auto-click Skip/Next if shown:</label>
+      <input id="autoSkip" type="checkbox" />
+      <span class="hint">Clicks YouTube’s own Skip/Next when available (no ad skipping beyond YouTube UI).</span>
+    </div>
+
+    <div class="divider"></div>
+
     <div class="row">
       <button id="saveBtn">Save</button>
       <span id="status" class="hint"></span>
     </div>
 
-    <script>
-      const adSpeedInput = document.getElementById('adSpeed');
-      const status = document.getElementById('status');
-      const saveBtn = document.getElementById('saveBtn');
-
-      function load() {
-        if (!chrome?.storage?.sync) return;
-        chrome.storage.sync.get(['adSpeed'], (res) => {
-          adSpeedInput.value = (res.adSpeed ?? 4.0);
-        });
-      }
-
-      saveBtn.addEventListener('click', () => {
-        const v = parseFloat(adSpeedInput.value);
-        const adSpeed = (!Number.isNaN(v) && v > 0) ? v : 4.0;
-        chrome.storage.sync.set({ adSpeed }, () => {
-          status.textContent = 'Saved!';
-          setTimeout(() => status.textContent = '', 1500);
-        });
-      });
-
-      load();
-    </script>
+    <script src="options.js" defer></script>
   </body>
 </html>
